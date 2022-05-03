@@ -49,17 +49,19 @@ function renderBoard() {
                 ${section.tasks.map(task => {
             return `
            
-                    <div class="task" id="${task.id}" style = "background-color: ${task.color};" onclick="editTask('${section.id}', '${task.id}');">
-                     <i id="${task.id}" section-id="${section.id}" >
+                    <div class="task" id="${task.id}" style = "background-color: ${task.color};" >
                         <div class="title-task" style="z-index:-1">
-                            <div class="text">${task.title}</div>
+                            <input type="text" id="text" style = "background-color: ${task.color};" value= '${task.title}' oninput=" testT = this.value;" onblur="editTaskTitle('${section.id}','${task.id}',testT)">
+                            
                             <div class="toolbar" style="z-index:1">
                                 <button title="Delete Task" class="delete" onclick="deleteTask('${section.id}', '${task.id}')"></button>
                             </div>
                         </div>
 
-                        <div class="description">${task.description}</div>
-                        </i>
+                        <textarea id="description" style = "background-color: ${task.color};" oninput=" testDesc = this.value;" onblur="editTaskDesc('${section.id}','${task.id}',testDesc)">${task.description}</textarea>
+                        
+                        <input type="text" id="color" style = "background-color: ${task.color};"  value ='${task.color}' oninput=" testCol = this.value;" onblur="editTaskColor('${section.id}','${task.id}',testCol)">
+                        <div id="${task.id}" section-id="${section.id}" style="text-align:center;font-size:25px" >... </div>
                     </div>   
                     `
         }).join("")}
@@ -72,7 +74,7 @@ function renderBoard() {
     // Update localStorage
     localStorage.setItem('kanban_sections', JSON.stringify(sections))
 }
-
+renderBoard();
 function addSection() {
     let section = askInput(['title']);
     let RandId = Math.random()
@@ -89,12 +91,11 @@ function deleteSection(id) {
     renderBoard();
 }
 
- function editSection(id,test) {
+function editSection(id, test) {
     let section = sections.find(x => x.id == id);
     section.title = test;
     renderBoard();
 }
-
 function addTask(id) {
     let section = sections.find(x => x.id == id);
     let task = askInput(['title', 'description', 'color']);
@@ -112,24 +113,37 @@ function addTask(id) {
 
 function deleteTask(sectionId, taskId) {
     let section = sections.find(x => x.id == sectionId);
-
     section.tasks = section.tasks.filter(task => task.id != taskId);
+
     renderBoard();
 }
-
-function editTask(sectionId, taskId) {
+function editTaskTitle(sectionId, taskId, test) {
     let section = sections.find(x => x.id == sectionId);
-
     let task = section.tasks.find(task => task.id == taskId);
-    let updateTitle = prompt("Введите заголовок карточки", task.title)
-    let updateDescription = prompt("Введите описание карточки", task.description)
-    let updateColor = prompt("Введите цвет фона карточки", task.color)
-    task.title = updateTitle;
-    task.description = updateDescription;
-    task.color = updateColor;
+    task.title = test
+    // let updateTitle = prompt("Введите заголовок карточки", task.title)
+    // let updateDescription = prompt("Введите описание карточки", task.description)
+    // let updateColor = prompt("Введите цвет фона карточки", task.color)
+    // task.title = updateTitle;
+    // task.description = updateDescription;
+    // task.color = updateColor;
+    renderBoard();
+}
+function editTaskDesc(sectionId, taskId, test) {
+    let section = sections.find(x => x.id == sectionId);
+    let task = section.tasks.find(task => task.id == taskId);
+
+    task.description = test
     renderBoard();
 }
 
+
+function editTaskColor(sectionId, taskId, test) {
+    let section = sections.find(x => x.id == sectionId);
+    let task = section.tasks.find(task => task.id == taskId);
+    task.color = test
+    renderBoard();
+}
 function askInput(input) {
     let result = {};
     input.forEach(item => {
@@ -145,7 +159,6 @@ function askInput(input) {
 }
 
 
-renderBoard();
 
 
 // DRAG & DROP
@@ -173,7 +186,7 @@ function mouseDown(event) {
 document.addEventListener('mousedown', mouseDown);
 
 function mouseMove(event) {
-    
+
     activeDragElement.style.top = event.y + window.scrollY - activeDrag.height - 2 + "px";
     activeDragElement.style.left = event.x + window.scrollX - (activeDrag.width / 2) + "px";
 }
