@@ -1,3 +1,4 @@
+
 var defaultSections = [
     {
         id: 1,
@@ -47,34 +48,36 @@ function renderBoard() {
             </div>
 
                 ${section.tasks.map(task => {
+
             return `
-           
-                    <div class="task" id="${task.id}" style = "background-color: ${task.color};" >
-                        <div class="title-task" style="z-index:-1">
-                            <input type="text" id="text" style = "background-color: ${task.color};" value= '${task.title}' oninput=" testT = this.value;" onblur="editTaskTitle('${section.id}','${task.id}',testT)">
-                            
-                            <div class="toolbar" style="z-index:1">
-                                <button title="Delete Task" class="delete" onclick="deleteTask('${section.id}', '${task.id}')"></button>
-                            </div>
+                    <div class="task" id="${task.id}" style = "background-color: ${task.color};">
+                    <i id="${task.id}" section-id="${section.id}"; onclick="openForm('${section.id}','${task.id}')"> 
+                        <div class="title-task">
+                            <div class="text" id="${task.id}" style="width:10px">${task.title}</div>
+
                         </div>
 
-                        <textarea id="description" style = "background-color: ${task.color};" oninput=" testDesc = this.value;" onblur="editTaskDesc('${section.id}','${task.id}',testDesc)">${task.description}</textarea>
-                        
-                        <input type="text" id="color" style = "background-color: ${task.color};"  value ='${task.color}' oninput=" testCol = this.value;" onblur="editTaskColor('${section.id}','${task.id}',testCol)">
-                        <div id="${task.id}" section-id="${section.id}" style="text-align:center;font-size:25px" >... </div>
-                    </div>   
+                        <div class="description">${task.description}</div>
+
+                        </i>  
+                        <div class="toolbar">
+                        <button title="Delete Task" class="delete" onclick="deleteTask('${section.id}', '${task.id}')"></button>
+                    </div>
+                </div>
                     `
         }).join("")}
             </div>
+
         </div>
         `;
 
     }).join("");
-
     // Update localStorage
     localStorage.setItem('kanban_sections', JSON.stringify(sections))
 }
 renderBoard();
+
+
 function addSection() {
     let section = askInput(['title']);
     let RandId = Math.random()
@@ -96,72 +99,81 @@ function editSection(id, test) {
     section.title = test;
     renderBoard();
 }
+function openForm(sectionId, taskId) {
+
+    let section = sections.find(x => x.id == sectionId);
+    let task = section.tasks.find(task => task.id == taskId);
+    document.getElementById('blackfon').style.display = 'block';
+    document.getElementById("myForm").style.display = "block";
+    let Title = document.getElementById("title");
+    let Description = document.getElementById("description");
+    let Color = document.getElementById("color");
+    Title.setAttribute("value", task.title);
+    Description.setAttribute("value", task.description);
+    Color.setAttribute("value", task.color);
+    var button = document.querySelector('#btn');
+    function LoadForm() {
+        let t = document.getElementById("title").value;
+        let d = document.getElementById("description").value
+        let c = document.getElementById("color").value
+        task.title = t;
+        task.description = d;
+        task.color = c;
+        document.getElementById('blackfon').style.display = 'none';
+        renderBoard();
+    }
+    button.addEventListener('click', LoadForm);
+}
+function closeForm() {
+    document.getElementById("myForm").style.display = "none";
+    document.getElementById('blackfon').style.display = 'none';
+}
+
 function addTask(id) {
     let section = sections.find(x => x.id == id);
-    let task = askInput(['title', 'description', 'color']);
+    document.getElementById('blackfon').style.display = 'block';
+    document.getElementById("myForm").style.display = "block";
+    var button = document.querySelector('#btn');
+    function CreateForm() {
+        let t = document.getElementById("title").value;
+        let d = document.getElementById("description").value
+        let c = document.getElementById("color").value
+        let task = { title: t, description: d, color: c }
+        let RandId = Math.random()
+        let TaskId = ("" + RandId).split(".")
+        task.id = TaskId[1];
 
+        section.tasks.push(task);
+        document.getElementById('blackfon').style.display = 'none';
+        renderBoard();
+    }
+    button.addEventListener('click', CreateForm);
     // task.color = askInput(['color'])
     // console.log(task.color)
-    let RandId = Math.random()
-    let TaskId = ("" + RandId).split(".")
-    task.id = TaskId[1];
-
-    section.tasks.push(task);
-    renderBoard();
 
 }
 
 function deleteTask(sectionId, taskId) {
     let section = sections.find(x => x.id == sectionId);
+
     section.tasks = section.tasks.filter(task => task.id != taskId);
 
-    renderBoard();
-}
-function editTaskTitle(sectionId, taskId, test) {
-    let section = sections.find(x => x.id == sectionId);
-    let task = section.tasks.find(task => task.id == taskId);
-    task.title = test
-    // let updateTitle = prompt("Введите заголовок карточки", task.title)
-    // let updateDescription = prompt("Введите описание карточки", task.description)
-    // let updateColor = prompt("Введите цвет фона карточки", task.color)
-    // task.title = updateTitle;
-    // task.description = updateDescription;
-    // task.color = updateColor;
-    renderBoard();
-}
-function editTaskDesc(sectionId, taskId, test) {
-    let section = sections.find(x => x.id == sectionId);
-    let task = section.tasks.find(task => task.id == taskId);
-
-    task.description = test
-    renderBoard();
-}
-
-
-function editTaskColor(sectionId, taskId, test) {
-    let section = sections.find(x => x.id == sectionId);
-    let task = section.tasks.find(task => task.id == taskId);
-    task.color = test
     renderBoard();
 }
 function askInput(input) {
     let result = {};
     input.forEach(item => {
-        if (item == "description") {
-            result[item] = prompt("Введите описание ")
-        } else if (item == "title") {
+        if (item == "title") {
             result[item] = prompt("Введите заголовок ")
-        } else {
-            result[item] = prompt("Введите цвет фона(Пример:blue)")
         }
     })
     return result;
 }
 
+/**
+ * DRAG & DROP FEATURE
+ */
 
-
-
-// DRAG & DROP
 let activeDrag = {};
 let activeDragElement;
 function mouseDown(event) {
@@ -172,13 +184,14 @@ function mouseDown(event) {
         activeDrag.section = event.target.getAttribute('section-id');
 
         activeDragElement = event.target.parentElement;
-        activeDrag.width = activeDragElement.clientWidth;
-        activeDrag.height = activeDragElement.clientHeight;
+        activeDrag.width = activeDragElement.offsetWidth;
+        activeDrag.height = activeDragElement.offsetHeight;
         activeDragElement.style.position = 'absolute';
         activeDragElement.style.width = activeDrag.width - 20 + 'px';
 
         mouseMove(event)
 
+        // Прислушайтесь к движению мыши и наведите курсор вверх
         document.addEventListener('mousemove', mouseMove)
         document.addEventListener('mouseup', mouseUp)
     }
@@ -187,7 +200,7 @@ document.addEventListener('mousedown', mouseDown);
 
 function mouseMove(event) {
 
-    activeDragElement.style.top = event.y + window.scrollY - activeDrag.height - 2 + "px";
+    activeDragElement.style.top = event.y + window.scrollY - activeDrag.height - 10 + "px";
     activeDragElement.style.left = event.x + window.scrollX - (activeDrag.width / 2) + "px";
 }
 
@@ -198,6 +211,7 @@ function mouseUp(event) {
     activeDragElement.style.top = 'unset';
     activeDragElement.style.left = 'unset';
     document.removeEventListener('mousemove', mouseMove);
+    // document.removeEventListener('mousedown', mouseDown);
     document.removeEventListener('mouseup', mouseUp);
 
 
@@ -207,12 +221,16 @@ function mouseUp(event) {
         let section = sections.find(x => x.id == activeDrag.section);
         let task = section.tasks.find(x => x.id == activeDrag.task);
 
+        // Remove from where drag started
         section.tasks = section.tasks.filter(x => x.id != activeDrag.task)
 
+        // Add to where drag ended
         let dropSection = event.target.getAttribute('section-id');
-        sections.find(x => x.id == dropSection).tasks.unshift(task)
+        sections.find(x => x.id == dropSection).tasks.push(task)
 
         renderBoard();
     }
 }
+
+// Remove select listener
 document.addEventListener('selectstart', e => { e.preventDefault() })

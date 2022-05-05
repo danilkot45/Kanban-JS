@@ -11,24 +11,44 @@
 </head>
 
 <body>
-    <label class="h2" for="inp1"><font color="green" face="Phosphate">Подсказка</font></label>
+    <div class="blackfon" id="blackfon"></div>
+    <label class="h2" for="inp1">
+        <font color="green" face="Phosphate">Подсказка</font>
+    </label>
     <input id='inp1' type='checkbox' class='toggle' />
     <div class='tab'>
-<span>Чтобы создать карточку нужно двойным кликом мыши нажать внутри колонки!)</span><br>
-<span>Чтобы редактировать карточку нужно одним кликом мыши нажать внутри карточки!)</span><br>
-<span>Чтобы создать новую колонку нажмите на плюсик!)</span><br>
-<span>Чтобы изменить заголовок колонки нажмите на текст заголовка!) </span><br>
-<span>"..."- способ перетаскивать колонки</span>
+        <span>Чтобы создать карточку нужно двойным кликом мыши нажать внутри колонки!)</span><br>
+        <span>Чтобы редактировать карточку нужно одним кликом мыши нажать внутри карточки!)</span><br>
+        <span>Чтобы создать новую колонку нажмите на плюсик!)</span><br>
+        <span>Чтобы изменить заголовок колонки нажмите на текст заголовка!) </span>
     </div>
-<div class="container">
-    <div class="wrapper">
+    <div class="container">
+        <div class="wrapper">
 
-        <div id="sections" ></div>
-        <div class="line"></div>
+            <div id="sections"></div>
+            <div class="line"></div>
+        </div>
+
+        <div class="btn"> <button class="btn-plus" onclick="addSection()"></button></div>
+        <div class="form-popup" id="myForm">
+            <form action="" class="form-container">
+                <h1>Форма карточки</h1>
+
+                <label><b>Заголовок</b></label>
+                <input type="text" id="title">
+
+                <label><b>Описание</b></label>
+                <input type="text" id="description">
+                <label><b>Цвет фона(Пример: blue)</b></label>
+                <input type="text" id="color">
+
+                <button id="btn" class="btn">Загрузить</button>
+                <button type="button" class="btn cancel" onclick="closeForm()">Закрыть</button>
+            </form>
+        </div>
+
+
     </div>
-    
-    <div class="btn" > <button class="btn-plus" onclick="addSection()"></button></div>
-</div>
     <script src="./index.js"></script>
 </body>
 
