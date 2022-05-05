@@ -36,7 +36,7 @@
 .section:not(:last-child) {
   flex: 0 0 200px;
   border-right: 2px solid black;
-  min-height: 200px;
+  min-height: 500px;
 }
 
 .title {
